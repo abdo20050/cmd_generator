@@ -12,7 +12,7 @@ def grayGen(num):
 fileName = str(input("Input your file name [default is 'GG']:\n") or "GG")
 f = open(fileName+".cmd","w")
 stepSize = int(input("Enter your StepSize [default is '50':]\n") or 50)
-labels = ['']*20
+labels = [""]*20
 I = str(input("Input your labels [you can add up to 20 labels] [ default is 'a b']:\n") or "a b")
 numOfI = 0
 for i in I :
@@ -20,7 +20,7 @@ for i in I :
         labels[numOfI] = i
         numOfI += 1
 numOfIter = 2**numOfI
-signals = [[False]*numOfI]*(numOfIter)
+signals = [0]*(numOfIter)
 for i in range(numOfIter):
     signals[i] =  grayGen(i)
 txt = ""
