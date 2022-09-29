@@ -8,6 +8,7 @@ import sys, getopt
 fileName = ""
 stepSize = 50
 labels = [str("")]*20
+bLabels = [str("")]*20
 I = ""
 O = ""
 
@@ -35,10 +36,6 @@ def main(argv):
     O = O or "o"
 if __name__ == "__main__":
    main(sys.argv[1:])
-print("file Name is",fileName)
-print ("Input labels are ", I)
-print ("Output labels are ", O)
-
 
 f = open(fileName+".cmd","w")
 # print("Input your fileName:\n")
@@ -46,22 +43,48 @@ f = open(fileName+".cmd","w")
 # print("Input your stepSize:")
 # stepSize = input()
 
+#############sitting the labels
 numOfI = 0
 for i in I :
     if i != ' ' :
         labels[numOfI] += i
     else:
         numOfI += 1
-numOfI = 0
+numOfI = 0        
+
 for i in labels:
+    
     if i != "":
         numOfI += 1
+        if i[len(i)-1] == '`':
+            bLabels.insert(0,i)
     else:
         break
+##############removing nonBared label pair
+for i in bLabels:
+    if i == "":
+        break
+    try:
+        labels.remove(i[:len(i)-1])
+        #print("remove",i[:len(i)-1])
+        numOfI-=1
+    except:
+        # print(i[:len(i)-1],"not found")
+        continue
+###########################
+##########print in terminal
+print("file Name is",fileName)
+print ("Input labels are " ,end=' ')
+for i in labels:
+    if i == "":
+        break
+    if i[len(i)-1] == '`':
+        print(i[:len(i)-1],end=' ')
+    print(i,end = ' ')
+print()
+print ("Output labels are ", O)
+##########################
 numOfIter = 2**numOfI
-signals = [0]*(numOfIter)
-for i in range(numOfIter):
-    signals[i] =  i
 txt = ""
 txt += "stepsize "+str(stepSize)+'\n'
 txt += "ana vdd gnd "+I + " " + O + '\n'
@@ -71,7 +94,11 @@ txt += "l gnd \n"
 
 for i in range(numOfIter):
     for j in range(numOfI):
-        txt += ('h' if (signals[i]>>j & 1) else 'l')+' '+labels[j] + '\n'
+        if '`' in labels[j]:
+            txt += ('h' if (i>>j & 1) else 'l')+' '+labels[j][:len(labels[j])-1] + '\n'
+            txt += ('l' if (i>>j & 1) else 'h')+' '+labels[j] + '\n'
+        else:
+            txt += ('h' if (i>>j & 1) else 'l')+' '+labels[j] + '\n'
     txt += "s\n"
 f.write(txt)
 f.close()
